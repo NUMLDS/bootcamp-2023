@@ -50,7 +50,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -63,7 +63,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -508,7 +508,7 @@ style.innerHTML = style_script;
 document.getElementsByTagName('head')[0].appendChild(style);
 </script>
 
-    <script src="R7_slides_files/header-attrs-2.14/header-attrs.js"></script>
+    <script src="R7_slides_files/header-attrs-2.24/header-attrs.js"></script>
 </head>
 <body>
   <div class="reveal">
@@ -518,52 +518,80 @@ document.getElementsByTagName('head')[0].appendChild(style);
     <h1 class="title">Advanced R: Day 3</h1>
   <h1 class="subtitle">Data visualization with ggplot2</h1>
     <h2 class="author">Alice Zhao</h2>
-    <h3 class="date">September 2022</h3>
+    <h3 class="date">September 2023</h3>
 </section>
 
 <section>
 <section id="introduction-to-ggplot" class="title-slide slide level1">
 <h1>Introduction to ggplot</h1>
-<p>Part of the <code>tidyverse</code>, <code>ggplot2</code> is an R package that implements the “grammar of graphics” in R.</p>
-<p>In ggplot, graphics are built by supplying <em>data</em> and <em>mapping</em> of data values to aesthetics, and then adding <em>layers</em> that build geometric objects, scales, labels, and more.</p>
+<p>Part of the <code>tidyverse</code>, <code>ggplot2</code> is an R
+package that implements the “grammar of graphics” in R.</p>
+<p>In ggplot, graphics are built by supplying <em>data</em> and
+<em>mapping</em> of data values to aesthetics, and then adding
+<em>layers</em> that build geometric objects, scales, labels, and
+more.</p>
 </section>
 <section id="why-ggplot" class="slide level2">
 <h2>Why ggplot?</h2>
 <ul>
 <li class="fragment">Highly customizable and extensible.</li>
-<li class="fragment">Designed to work with <code>dplyr</code> and other <code>tidyverse</code> packages.</li>
-<li class="fragment">In use for over 10 years, meaning that help is widely available.</li>
-<li class="fragment">Wide variety of avilable <a href="http://www.ggplot2-exts.org/gallery/">extensions</a></li>
+<li class="fragment">Designed to work with <code>dplyr</code> and other
+<code>tidyverse</code> packages.</li>
+<li class="fragment">In use for over 10 years, meaning that help is
+widely available.</li>
+<li class="fragment">Wide variety of avilable <a
+href="http://www.ggplot2-exts.org/gallery/">extensions</a></li>
 </ul>
 </section>
 <section id="useful-resources" class="slide level2">
 <h2>Useful resources</h2>
 <ul>
-<li>The <a href="https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf">ggplot cheatsheet</a></li>
-<li>The <a href="https://ggplot2.tidyverse.org/reference/index.html">ggplot reference guide</a></li>
-<li>The <a href="http://r4ds.had.co.nz/data-visualisation.html">Data Visualization chapter</a> in the “R for Data Science” book</li>
-<li>And, of course, the help files that come with the package itself.</li>
+<li>The <a
+href="https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf">ggplot
+cheatsheet</a></li>
+<li>The <a
+href="https://ggplot2.tidyverse.org/reference/index.html">ggplot
+reference guide</a></li>
+<li>The <a href="http://r4ds.had.co.nz/data-visualisation.html">Data
+Visualization chapter</a> in the “R for Data Science” book</li>
+<li>And, of course, the help files that come with the package
+itself.</li>
 </ul>
 </section>
-<section id="lets-make-sure-we-have-the-necessary-data-frames-for-our-examples" class="slide level2">
-<h2>Let’s make sure we have the necessary data frames for our examples</h2>
+<section
+id="lets-make-sure-we-have-the-necessary-data-frames-for-our-examples"
+class="slide level2">
+<h2>Let’s make sure we have the necessary data frames for our
+examples</h2>
 <ol type="1">
-<li>If you still have <code>imports</code>, <code>generation</code>, <code>merged_energy</code>, <code>long_gen</code> and <code>long_merged_energy</code> in your Enrivorment, read in <code>gapminder</code> and recreate <code>gapminder07</code>.</li>
-<li>Alternatively, or if you are missing any of those objects from your workspace, run the following line of code:</li>
+<li>If you still have <code>imports</code>, <code>generation</code>,
+<code>merged_energy</code>, <code>long_gen</code> and
+<code>long_merged_energy</code> in your Enrivorment, read in
+<code>gapminder</code> and recreate <code>gapminder07</code>.</li>
+<li>Alternatively, or if you are missing any of those objects from your
+workspace, run the following line of code:</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data/day3_objects.R&quot;</span>))</span></code></pre></div>
 </section></section>
 <section>
-<section id="basics-grammar-of-graphics" class="title-slide slide level1">
+<section id="basics-grammar-of-graphics"
+class="title-slide slide level1">
 <h1>Basics: grammar of graphics</h1>
 
 </section>
 <section id="components-of-a-basic-plot" class="slide level2">
 <h2>Components of a basic plot</h2>
 <ul>
-<li class="fragment"><strong>data</strong>: a data frame, provided to the <code>ggplot()</code> function</li>
-<li class="fragment"><strong>geometric objects</strong>: the objects/shapes that you want to plot, indicated through one of the many available <code>geom</code> functions, such as <code>geom_point()</code> or <code>geom_hist()</code></li>
-<li class="fragment"><strong>aesthetic mapping</strong>: the mapping from the data to the geometric objects, provided in an <code>aes()</code> function nested within the chosen <code>geom</code> function</li>
+<li class="fragment"><strong>data</strong>: a data frame, provided to
+the <code>ggplot()</code> function</li>
+<li class="fragment"><strong>geometric objects</strong>: the
+objects/shapes that you want to plot, indicated through one of the many
+available <code>geom</code> functions, such as <code>geom_point()</code>
+or <code>geom_hist()</code></li>
+<li class="fragment"><strong>aesthetic mapping</strong>: the mapping
+from the data to the geometric objects, provided in an
+<code>aes()</code> function nested within the chosen <code>geom</code>
+function</li>
 <li class="fragment">connected with the <code>+</code> operator</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="sc">&lt;</span>DATA FRAME<span class="sc">&gt;</span>) <span class="sc">+</span> </span>
@@ -574,12 +602,17 @@ Write this on the board, without data= and mapping= specified.
 </section>
 <section id="example-scatterplot-from-day-1" class="slide level2">
 <h2>Example: Scatterplot from Day 1</h2>
-<p>Task:<br>Create scatterplot of <code>lifeExp</code> against <code>gdpPercap</code> from <code>gapminder07</code> data.</p>
+<p>Task:<br>Create scatterplot of <code>lifeExp</code> against
+<code>gdpPercap</code> from <code>gapminder07</code> data.</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Supply <code>gapminder07</code> data frame as input to <code>ggplot()</code> function</li>
-<li class="fragment">Choose a <code>geom</code>; in this case we choose <code>geom_point()</code> to generate points</li>
-<li class="fragment">Supply aesthetic mapping, i.e. specify <code>x</code> and <code>y</code> values, to <code>geom_point()</code>.</li>
+<li class="fragment">Supply <code>gapminder07</code> data frame as input
+to <code>ggplot()</code> function</li>
+<li class="fragment">Choose a <code>geom</code>; in this case we choose
+<code>geom_point()</code> to generate points</li>
+<li class="fragment">Supply aesthetic mapping, i.e. specify
+<code>x</code> and <code>y</code> values, to
+<code>geom_point()</code>.</li>
 </ol>
 </section>
 <section id="example-scatterplot-from-day-1-1" class="slide level2">
@@ -598,10 +631,16 @@ Write this on the board, without data= and mapping= specified.
 </section>
 <section id="exercise-1-scatterplot" class="slide level2">
 <h2>Exercise 1: Scatterplot</h2>
-<p>Using the <code>gapminder07</code> data, create a scatterplot of the natural log of <code>gdpPercap</code> as a function of the natural log of <code>pop</code>. Give it a title and axis labels.</p>
-<p>Remember, you will need three functions: <code>ggplot()</code>, <code>geom_point()</code>, and <code>labs()</code>.</p>
+<p>Using the <code>gapminder07</code> data, create a scatterplot of the
+natural log of <code>gdpPercap</code> as a function of the natural log
+of <code>pop</code>. Give it a title and axis labels.</p>
+<p>Remember, you will need three functions: <code>ggplot()</code>,
+<code>geom_point()</code>, and <code>labs()</code>.</p>
 <aside class="notes">
-You can create a new script file for your exercises in this session, or you can continue to use script files from earlier in the day. In either case, make sure to give the file a sensible filename and to demarcate sections with meaningful comments.
+You can create a new script file for your exercises in this session, or
+you can continue to use script files from earlier in the day. In either
+case, make sure to give the file a sensible filename and to demarcate
+sections with meaningful comments.
 </aside>
 </section>
 <section id="exercise-1-scatterplot-1" class="slide level2">
@@ -615,21 +654,29 @@ You can create a new script file for your exercises in this session, or you can 
 <section id="preparing-your-data" class="title-slide slide level1">
 <h1>Preparing your data</h1>
 <ul>
-<li class="fragment">Recall the role of pipes (<code>%&gt;%</code>) in <code>dplyr</code> this morning.</li>
-<li class="fragment"><code>dplyr</code> and <code>ggplot2</code> are designed to work well together.</li>
-<li class="fragment">You can use a series of pipes to prepare your data before plotting.</li>
-<li class="fragment">To see examples, let’s turn to the California energy data.</li>
+<li class="fragment">Recall the role of pipes (<code>%&gt;%</code>) in
+<code>dplyr</code> this morning.</li>
+<li class="fragment"><code>dplyr</code> and <code>ggplot2</code> are
+designed to work well together.</li>
+<li class="fragment">You can use a series of pipes to prepare your data
+before plotting.</li>
+<li class="fragment">To see examples, let’s turn to the California
+energy data.</li>
 </ul>
 </section>
 <section id="example-energy-generated-over-time" class="slide level2">
 <h2>Example: Energy generated over time</h2>
-<p>Task:<br>Plot a <em>column chart</em> of <em>total</em> energy generated over time.</p>
+<p>Task:<br>Plot a <em>column chart</em> of <em>total</em> energy
+generated over time.</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Choose long-format generation data, i.e. <code>long_gen</code>.</li>
-<li class="fragment">Manipulate data frame to calculate total output per date-time.</li>
+<li class="fragment">Choose long-format generation data,
+i.e. <code>long_gen</code>.</li>
+<li class="fragment">Manipulate data frame to calculate total output per
+date-time.</li>
 <li class="fragment">Pipe manipulated data frame into plot.</li>
-<li class="fragment">Select <code>geom_col()</code> and map appropriate <code>x</code> and <code>y</code> variables.</li>
+<li class="fragment">Select <code>geom_col()</code> and map appropriate
+<code>x</code> and <code>y</code> variables.</li>
 </ol>
 </section>
 <section id="example-energy-generated-over-time-1" class="slide level2">
@@ -642,12 +689,16 @@ You can create a new script file for your exercises in this session, or you can 
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Total energy generated, by hour&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Output (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/data%20prep%202-1.png" width="768" /></p>
 </section>
-<section id="exercise-2-hydro-power-generated-over-time" class="slide level2">
+<section id="exercise-2-hydro-power-generated-over-time"
+class="slide level2">
 <h2>Exercise 2: Hydro power generated over time</h2>
-<p>Task:<br>Plot a column chart <em>hydroelectric</em> power generated over time.</p>
-<p><small>Hint: There are two types of hydroelectric sources in the data: <code>large_hydro</code> and <code>small_hydro</code>.</small></p>
+<p>Task:<br>Plot a column chart <em>hydroelectric</em> power generated
+over time.</p>
+<p><small>Hint: There are two types of hydroelectric sources in the
+data: <code>large_hydro</code> and <code>small_hydro</code>.</small></p>
 </section>
-<section id="exercise-2-hydro-power-generated-over-time-1" class="slide level2">
+<section id="exercise-2-hydro-power-generated-over-time-1"
+class="slide level2">
 <h2>Exercise 2: Hydro power generated over time</h2>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>long_gen <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(source<span class="sc">==</span><span class="st">&quot;large_hydro&quot;</span><span class="sc">|</span>source<span class="sc">==</span><span class="st">&quot;small_hydro&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -658,7 +709,8 @@ You can create a new script file for your exercises in this session, or you can 
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Total hydro power generated, by hour&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Output (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/data%20prep%20ex1-1.png" width="768" /></p>
 </section>
-<section id="exercise-2-hydro-power-generated-over-time-2" class="slide level2">
+<section id="exercise-2-hydro-power-generated-over-time-2"
+class="slide level2">
 <h2>Exercise 2: Hydro power generated over time</h2>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>generation <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hydro=</span>large_hydro<span class="sc">+</span>small_hydro) <span class="sc">%&gt;%</span></span>
@@ -685,16 +737,21 @@ You can create a new script file for your exercises in this session, or you can 
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Energy imports over time&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Amount imported (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/geom_line%201-1.png" width="768" /></p>
 </section>
-<section id="interlude-changing-geom-characteristics" class="slide level2">
+<section id="interlude-changing-geom-characteristics"
+class="slide level2">
 <h2>Interlude: changing geom characteristics</h2>
 <ul>
-<li class="fragment">In the geom functions, we have only been supplying aesthetic mapping (in <code>aes()</code>).</li>
-<li class="fragment">Geom functions can also control characteristics of the geom object, <em>outside</em> the <code>aes()</code> function.</li>
-<li class="fragment">In most geoms, we can modulate <code>size=</code> and <code>col=</code>.</li>
+<li class="fragment">In the geom functions, we have only been supplying
+aesthetic mapping (in <code>aes()</code>).</li>
+<li class="fragment">Geom functions can also control characteristics of
+the geom object, <em>outside</em> the <code>aes()</code> function.</li>
+<li class="fragment">In most geoms, we can modulate <code>size=</code>
+and <code>col=</code>.</li>
 <li class="fragment">Let’s try it with the line plot we just made.</li>
 </ul>
 </section>
-<section id="interlude-changing-geom-characteristics-1" class="slide level2">
+<section id="interlude-changing-geom-characteristics-1"
+class="slide level2">
 <h2>Interlude: changing geom characteristics</h2>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>imports <span class="sc">%&gt;%</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
@@ -720,14 +777,21 @@ You can create a new script file for your exercises in this session, or you can 
 </section>
 <section id="multiple-geoms-in-one-plot" class="slide level2">
 <h2>Multiple geoms in one plot</h2>
-<p>Task:<br>Plot a <em>line</em> of large hydro generation over time, and a <em>smoothed line</em> of the same relationship on top of it.</p>
+<p>Task:<br>Plot a <em>line</em> of large hydro generation over time,
+and a <em>smoothed line</em> of the same relationship on top of it.</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Supply the <code>generation</code> data to <code>ggplot()</code>.</li>
-<li class="fragment">Create a line with <code>geom_line()</code> with appropriate <code>x</code> and <code>y</code> aesthetics. Make it turquoise for fun.</li>
-<li class="fragment">Create a smoothed line with <code>geom_smooth()</code> with the same <code>x</code> and <code>y</code> aesthetics.
+<li class="fragment">Supply the <code>generation</code> data to
+<code>ggplot()</code>.</li>
+<li class="fragment">Create a line with <code>geom_line()</code> with
+appropriate <code>x</code> and <code>y</code> aesthetics. Make it
+turquoise for fun.</li>
+<li class="fragment">Create a smoothed line with
+<code>geom_smooth()</code> with the same <code>x</code> and
+<code>y</code> aesthetics.
 <ol type="1">
-<li class="fragment"><code>geom_smooth()</code> plots smoothed conditional means (estimated using a loess regression)</li>
+<li class="fragment"><code>geom_smooth()</code> plots smoothed
+conditional means (estimated using a loess regression)</li>
 </ol></li>
 </ol>
 </section>
@@ -738,16 +802,20 @@ You can create a new script file for your exercises in this session, or you can 
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>datetime, <span class="at">y=</span>large_hydro), <span class="at">col=</span><span class="st">&quot;turquoise3&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>datetime, <span class="at">y=</span>large_hydro)) <span class="sc">+</span> </span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Hydroelectric (large) generation per hour, Sept 3-9&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Output (MW)&quot;</span>)</span></code></pre></div>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
 <p><img src="R7_slides_files/figure-revealjs/multiple%20geoms-1.png" width="768" /></p>
 </section>
 <section id="exercise-3-total-output-per-source" class="slide level2">
 <h2>Exercise 3: Total output per source</h2>
-<p>Task:<br>Create a column chart that shows the total output per source.</p>
+<p>Task:<br>Create a column chart that shows the total output per
+source.</p>
 <ul>
 <li>Change the color of the columns to <code>"darkred"</code>.</li>
-<li>Add a horizontal line indicating the mean output across all sources. Use the cheatsheet to identify the <code>geom</code> function that you need.</li>
-<li>Add a meaningful title and axis labels using <code>labs()</code>.</li>
+<li>Add a horizontal line indicating the mean output across all sources.
+Use the cheatsheet to identify the <code>geom</code> function that you
+need.</li>
+<li>Add a meaningful title and axis labels using
+<code>labs()</code>.</li>
 </ul>
 </section>
 <section id="exercise-3-total-output-per-source-1" class="slide level2">
@@ -769,8 +837,11 @@ You can create a new script file for your exercises in this session, or you can 
 <section id="labels" class="slide level2">
 <h2>Labels</h2>
 <ul>
-<li class="fragment">We have already seen that the <code>labs()</code> layer can add titles (<code>title=</code>) and axis labels (<code>x=</code> and <code>y=</code>) to a plot.</li>
-<li class="fragment">It can also add subtitles (<code>subtitle=</code>) and captions (<code>caption=</code>).</li>
+<li class="fragment">We have already seen that the <code>labs()</code>
+layer can add titles (<code>title=</code>) and axis labels
+(<code>x=</code> and <code>y=</code>) to a plot.</li>
+<li class="fragment">It can also add subtitles (<code>subtitle=</code>)
+and captions (<code>caption=</code>).</li>
 </ul>
 </section>
 <section id="labels-1" class="slide level2">
@@ -788,28 +859,41 @@ No exercise this time, but we will practice this later.
 <section id="scales" class="slide level2">
 <h2>Scales</h2>
 <ul>
-<li class="fragment">Scales allow you to manipulate the relationship between data values and aesthetics beyond aesthetic mapping.
+<li class="fragment">Scales allow you to manipulate the relationship
+between data values and aesthetics beyond aesthetic mapping.
 <ul>
-<li class="fragment">AKA: scales “control the details of how data values are translated to visual properties” (quote from <a href="https://ggplot2.tidyverse.org/reference/index.html#section-aesthetics">reference guide</a>).</li>
+<li class="fragment">AKA: scales “control the details of how data values
+are translated to visual properties” (quote from <a
+href="https://ggplot2.tidyverse.org/reference/index.html#section-aesthetics">reference
+guide</a>).</li>
 </ul></li>
 <li class="fragment">For example:
 <ul>
-<li class="fragment"><code>scale_alpha</code>: control transparency settings</li>
-<li class="fragment"><code>scale_color</code> and <code>scale_fill</code>: control color palettes and other aspects of data mapped to colors</li>
-<li class="fragment"><code>scale_x</code> and <code>scale_y</code>: control the position of axis markers</li>
+<li class="fragment"><code>scale_alpha</code>: control transparency
+settings</li>
+<li class="fragment"><code>scale_color</code> and
+<code>scale_fill</code>: control color palettes and other aspects of
+data mapped to colors</li>
+<li class="fragment"><code>scale_x</code> and <code>scale_y</code>:
+control the position of axis markers</li>
 </ul></li>
 <li class="fragment">The cheatsheet is your friend!</li>
 </ul>
 </section>
 <section id="scales-1" class="slide level2">
 <h2>Scales</h2>
-<p>Task:<br>Recreate line plot of imports over time, but label x-axis with hours rather than dates.</p>
+<p>Task:<br>Recreate line plot of imports over time, but label x-axis
+with hours rather than dates.</p>
 <p>Steps:</p>
 <ol start="0" type="1">
 <li class="fragment">Check the cheatsheet!</li>
-<li class="fragment">Supply <code>imports</code> data to <code>ggplot()</code>.</li>
-<li class="fragment">Add a <code>geom_line()</code> layer and map appropriate <code>x</code> and <code>y</code> variables.</li>
-<li class="fragment">Add a <code>scale_x_datetime()</code> layer and use <code>date_labels=</code> and <code>date_breaks=</code> arguments to modify x-axis labels and breaks.</li>
+<li class="fragment">Supply <code>imports</code> data to
+<code>ggplot()</code>.</li>
+<li class="fragment">Add a <code>geom_line()</code> layer and map
+appropriate <code>x</code> and <code>y</code> variables.</li>
+<li class="fragment">Add a <code>scale_x_datetime()</code> layer and use
+<code>date_labels=</code> and <code>date_breaks=</code> arguments to
+modify x-axis labels and breaks.</li>
 <li class="fragment">Add a <code>labs()</code> layer.</li>
 </ol>
 </section>
@@ -822,17 +906,22 @@ No exercise this time, but we will practice this later.
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Energy imports over time in California&quot;</span>, <span class="at">subtitle=</span><span class="st">&quot;Hourly data from September 3-9, 2018&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Amount imported (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/scales%20dates-1.png" width="768" /></p>
 <aside class="notes">
-See lecture notes for details on what’s going on inside the scale function. Or read the help file. No exercise this time, but we will practice this later.
+See lecture notes for details on what’s going on inside the scale
+function. Or read the help file. No exercise this time, but we will
+practice this later.
 </aside>
 </section>
 <section id="themes-presets" class="slide level2">
 <h2>Themes: presets</h2>
-<p>ggplot comes with several preset themes that can be added as layers, including:</p>
+<p>ggplot comes with several preset themes that can be added as layers,
+including:</p>
 <ul>
 <li><code>theme_grey()</code>: default</li>
 <li><code>theme_bw()</code>: strip colors, including grey gradients</li>
-<li><code>theme_dark()</code> and <code>theme_light()</code>: change the background of the coordinate system</li>
-<li><code>theme_minimal()</code> and <code>theme_void()</code>: see reference guide for details</li>
+<li><code>theme_dark()</code> and <code>theme_light()</code>: change the
+background of the coordinate system</li>
+<li><code>theme_minimal()</code> and <code>theme_void()</code>: see
+reference guide for details</li>
 </ul>
 </section>
 <section id="example-imports-over-time-1" class="slide level2">
@@ -846,12 +935,17 @@ See lecture notes for details on what’s going on inside the scale function. Or
 </section>
 <section id="themes-manual" class="slide level2">
 <h2>Themes: manual</h2>
-<p>The <code>theme()</code> layer lets you modulate many components of the theme, including:</p>
+<p>The <code>theme()</code> layer lets you modulate many components of
+the theme, including:</p>
 <ul>
-<li class="fragment">Angle, position, and other characteristics of axis labels (e.g. <code>axis.labels.x =</code>).</li>
-<li class="fragment">Angle, position, and other characteristics of legends (e.g. <code>legend.position =</code>).</li>
-<li class="fragment">Characteristics of the background of the plot (e.g. <code>plot.background =</code>).</li>
-<li class="fragment">For a full list of the components that can be modified, see the help file for <code>ggplot2::theme()</code>.</li>
+<li class="fragment">Angle, position, and other characteristics of axis
+labels (e.g. <code>axis.labels.x =</code>).</li>
+<li class="fragment">Angle, position, and other characteristics of
+legends (e.g. <code>legend.position =</code>).</li>
+<li class="fragment">Characteristics of the background of the plot
+(e.g. <code>plot.background =</code>).</li>
+<li class="fragment">For a full list of the components that can be
+modified, see the help file for <code>ggplot2::theme()</code>.</li>
 </ul>
 </section>
 <section id="example-imports-over-time-2" class="slide level2">
@@ -866,10 +960,17 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="coordinate-system-adjustment" class="slide level2">
 <h2>Coordinate system adjustment</h2>
 <ul>
-<li class="fragment"><code>coord_flip()</code> is the default Cartesian coordinate system used; by explicitly calling this function, you can change the limits of the <code>x</code> and <code>y</code> axes from their defaults</li>
-<li class="fragment"><code>coord_fixed()</code> sets a fixed aspect ratio between the <code>x</code> and <code>y</code> axes</li>
-<li class="fragment"><code>coord_transform()</code> lets you transform the Cartesian coordinates using functions like <code>sqrt</code> or <code>log</code></li>
-<li class="fragment"><code>coord_polar()</code> changes the coordinate system to polar coordinates rather than a Cartesian system</li>
+<li class="fragment"><code>coord_flip()</code> is the default Cartesian
+coordinate system used; by explicitly calling this function, you can
+change the limits of the <code>x</code> and <code>y</code> axes from
+their defaults</li>
+<li class="fragment"><code>coord_fixed()</code> sets a fixed aspect
+ratio between the <code>x</code> and <code>y</code> axes</li>
+<li class="fragment"><code>coord_transform()</code> lets you transform
+the Cartesian coordinates using functions like <code>sqrt</code> or
+<code>log</code></li>
+<li class="fragment"><code>coord_polar()</code> changes the coordinate
+system to polar coordinates rather than a Cartesian system</li>
 </ul>
 </section>
 <section id="example-coord_flip" class="slide level2">
@@ -894,32 +995,49 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="stats" class="slide level2">
 <h2>Stats</h2>
 <ul>
-<li class="fragment">There are several <code>stat</code> functions in ggplot that enable you to conduct statistical transformations of your data prior to plotting.</li>
-<li class="fragment"><code>stat</code> and <code>geom</code> layers can be used interchangeably, as each <code>stat</code> layer has a <code>geom</code> argument and vice versa.</li>
-<li class="fragment">You may want to use stat layers or arguments to override default settings, or to use transformed versions of a variable in your plot.</li>
-<li class="fragment">For more, see <a href="http://r4ds.had.co.nz/data-visualisation.html#statistical-transformations">Chapter 3.7 of the R for data science online textbook</a>.</li>
+<li class="fragment">There are several <code>stat</code> functions in
+ggplot that enable you to conduct statistical transformations of your
+data prior to plotting.</li>
+<li class="fragment"><code>stat</code> and <code>geom</code> layers can
+be used interchangeably, as each <code>stat</code> layer has a
+<code>geom</code> argument and vice versa.</li>
+<li class="fragment">You may want to use stat layers or arguments to
+override default settings, or to use transformed versions of a variable
+in your plot.</li>
+<li class="fragment">For more, see <a
+href="http://r4ds.had.co.nz/data-visualisation.html#statistical-transformations">Chapter
+3.7 of the R for data science online textbook</a>.</li>
 </ul>
 </section></section>
 <section>
 <section id="visualizing-grouped-data" class="title-slide slide level1">
 <h1>Visualizing grouped data</h1>
 <ul>
-<li class="fragment">We often want to visualize multiple variables, or a variable that can be divided into groups, in one graphic.</li>
-<li class="fragment">There are two broad principles for visualizing grouped variables in R:
+<li class="fragment">We often want to visualize multiple variables, or a
+variable that can be divided into groups, in one graphic.</li>
+<li class="fragment">There are two broad principles for visualizing
+grouped variables in R:
 <ul>
-<li class="fragment">Identify a grouping variable in a <code>geom()</code> using the <code>group =</code> argument, and demarcate the distinct objects created per group in some way.</li>
-<li class="fragment">Use facets to generate geometric objects in separate coordinate systems for each group.</li>
+<li class="fragment">Identify a grouping variable in a
+<code>geom()</code> using the <code>group =</code> argument, and
+demarcate the distinct objects created per group in some way.</li>
+<li class="fragment">Use facets to generate geometric objects in
+separate coordinate systems for each group.</li>
 </ul></li>
 </ul>
 </section>
 <section id="colors-and-fill" class="slide level2">
 <h2>Colors and fill</h2>
-<p>Task:<br>Create a line plot of energy output over time, with separate lines for each source.</p>
+<p>Task:<br>Create a line plot of energy output over time, with separate
+lines for each source.</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Supply the data frame <code>long_merged_energy</code> to <code>ggplot()</code>.</li>
-<li class="fragment">Add a <code>geom_line()</code> layer and specify <code>x=datetime</code> and <code>y=output</code>.</li>
-<li class="fragment">Also specify that <code>group=source</code> and <code>col=source</code>.</li>
+<li class="fragment">Supply the data frame
+<code>long_merged_energy</code> to <code>ggplot()</code>.</li>
+<li class="fragment">Add a <code>geom_line()</code> layer and specify
+<code>x=datetime</code> and <code>y=output</code>.</li>
+<li class="fragment">Also specify that <code>group=source</code> and
+<code>col=source</code>.</li>
 <li class="fragment">Add a <code>labs()</code> layer.</li>
 </ol>
 </section>
@@ -933,7 +1051,8 @@ See lecture notes for details on what’s going on inside the scale function. Or
 </section>
 <section id="exercise-4-colors-and-fill" class="slide level2">
 <h2>Exercise 4: Colors and fill</h2>
-<p>Task:<br>Create a line plot that compares generation of wind, solar, and geothermal energy over time.</p>
+<p>Task:<br>Create a line plot that compares generation of wind, solar,
+and geothermal energy over time.</p>
 <p><small>Bonus: Set the line size to 1.5.</small></p>
 </section>
 <section id="exercise-4-colors-and-fill-1" class="slide level2">
@@ -957,8 +1076,10 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="colors-and-fill-2" class="slide level2">
 <h2>Colors and fill</h2>
 <ul>
-<li><code>col=</code> is used to color objects like lines and points</li>
-<li><code>fill=</code> is used to color objects like columns and histograms
+<li><code>col=</code> is used to color objects like lines and
+points</li>
+<li><code>fill=</code> is used to color objects like columns and
+histograms
 <ul>
 <li><code>col=</code> will create colored outlines for such objects</li>
 </ul></li>
@@ -968,24 +1089,36 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="position-adjustment" class="slide level2">
 <h2>Position adjustment</h2>
 <ul>
-<li class="fragment">Once we introduce a grouping variable to a <code>geom</code> function, we generate multiple geometric objects on the same plot.</li>
-<li class="fragment">Colors and fill help us distinguish each object from other objects.</li>
-<li class="fragment">Another way to distinguish objects, often used together with color/fill, is <em>position adjustment</em>.</li>
+<li class="fragment">Once we introduce a grouping variable to a
+<code>geom</code> function, we generate multiple geometric objects on
+the same plot.</li>
+<li class="fragment">Colors and fill help us distinguish each object
+from other objects.</li>
+<li class="fragment">Another way to distinguish objects, often used
+together with color/fill, is <em>position adjustment</em>.</li>
 </ul>
 </section>
 <section id="example-energy-use-by-day" class="slide level2">
 <h2>Example: Energy use by day</h2>
-<p>Task:<br>Create a column chart of energy use by day, grouped by source.</p>
+<p>Task:<br>Create a column chart of energy use by day, grouped by
+source.</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Modify <code>long_merged_energy</code> to summarize output by date and source.
+<li class="fragment">Modify <code>long_merged_energy</code> to summarize
+output by date and source.
 <ol type="1">
-<li class="fragment">Use <code>mutate()</code> to create a <code>date</code> variable from <code>datetime</code>.</li>
-<li class="fragment">Use <code>group_by()</code> and <code>summarize()</code> to calculate total output per date per source.</li>
+<li class="fragment">Use <code>mutate()</code> to create a
+<code>date</code> variable from <code>datetime</code>.</li>
+<li class="fragment">Use <code>group_by()</code> and
+<code>summarize()</code> to calculate total output per date per
+source.</li>
 </ol></li>
-<li class="fragment">Supply modified data frame to <code>ggplot()</code></li>
-<li class="fragment">Add a <code>geom_col()</code> layer, supply <code>x</code> and <code>y</code> aesthetics.</li>
-<li class="fragment">Specify <code>group=source</code> and <code>fill=source</code>.</li>
+<li class="fragment">Supply modified data frame to
+<code>ggplot()</code></li>
+<li class="fragment">Add a <code>geom_col()</code> layer, supply
+<code>x</code> and <code>y</code> aesthetics.</li>
+<li class="fragment">Specify <code>group=source</code> and
+<code>fill=source</code>.</li>
 <li class="fragment">Add a <code>labs()</code> layer.</li>
 </ol>
 </section>
@@ -1005,14 +1138,19 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="example-energy-use-by-day-2" class="slide level2">
 <h2>Example: Energy use by day</h2>
 <ul>
-<li class="fragment">This column chart is useful if our main goal is to examine total output over time across sources.</li>
-<li class="fragment">But what if our main goal is to compare trends across sources?
+<li class="fragment">This column chart is useful if our main goal is to
+examine total output over time across sources.</li>
+<li class="fragment">But what if our main goal is to compare trends
+across sources?
 <ul>
-<li class="fragment">We can use <code>position="dodge"</code> in <code>geom_col()</code> ‘unstack’ the columns for each source.</li>
+<li class="fragment">We can use <code>position="dodge"</code> in
+<code>geom_col()</code> ‘unstack’ the columns for each source.</li>
 </ul></li>
-<li class="fragment">What if our goal is to compare what portion of output per day each source comprises?
+<li class="fragment">What if our goal is to compare what portion of
+output per day each source comprises?
 <ul>
-<li class="fragment">We can use <code>position="fill"</code> to normalize height of stacked columns.</li>
+<li class="fragment">We can use <code>position="fill"</code> to
+normalize height of stacked columns.</li>
 </ul></li>
 </ul>
 </section>
@@ -1045,22 +1183,30 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="shapes-and-linetypes" class="slide level2">
 <h2>Shapes and linetypes</h2>
 <ul>
-<li class="fragment">Colors/fill and position adjustment are the most common and intuitive way to distinguish geometric objects from each other.</li>
+<li class="fragment">Colors/fill and position adjustment are the most
+common and intuitive way to distinguish geometric objects from each
+other.</li>
 <li class="fragment">Shapes and linetypes are two other ways.</li>
-<li class="fragment">The idea here is to modify what the object actually looks like.</li>
+<li class="fragment">The idea here is to modify what the object actually
+looks like.</li>
 </ul>
 </section>
 <section id="example-energy-source-group-by-day" class="slide level2">
 <h2>Example: Energy source group, by day</h2>
-<p>Task:<br>Create a line graph of the output by day, with a different line for each regrouped group (renewable, hydro, etc.)</p>
+<p>Task:<br>Create a line graph of the output by day, with a different
+line for each regrouped group (renewable, hydro, etc.)</p>
 <p>Steps:</p>
 <ol type="1">
-<li class="fragment">Prepare data frame that summarizes output by date and “group” from <code>regroup</code>.</li>
-<li class="fragment">Supply modified data frame to <code>ggplot()</code>.</li>
+<li class="fragment">Prepare data frame that summarizes output by date
+and “group” from <code>regroup</code>.</li>
+<li class="fragment">Supply modified data frame to
+<code>ggplot()</code>.</li>
 <li class="fragment">Two choices!
 <ol type="1">
-<li class="fragment">Add <code>geom_line()</code> and <code>geom_point()</code> with <code>shape=group</code>.</li>
-<li class="fragment">Add <code>geom_line()</code> with <code>linetype=group</code>.</li>
+<li class="fragment">Add <code>geom_line()</code> and
+<code>geom_point()</code> with <code>shape=group</code>.</li>
+<li class="fragment">Add <code>geom_line()</code> with
+<code>linetype=group</code>.</li>
 </ol></li>
 </ol>
 </section>
@@ -1108,9 +1254,13 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="sizes-and-alpha" class="slide level2">
 <h2>Sizes and alpha</h2>
 <ul>
-<li class="fragment"><code>size=</code> and <code>alpha=</code> inside <code>aes()</code> modulate the size and transparency of geom objects based on some data value.</li>
-<li class="fragment">They are particularly useful when you want to distinguish objects based on some <em>continuous</em> variable.</li>
-<li class="fragment">Let’s return to the Gapminder data for an example.</li>
+<li class="fragment"><code>size=</code> and <code>alpha=</code> inside
+<code>aes()</code> modulate the size and transparency of geom objects
+based on some data value.</li>
+<li class="fragment">They are particularly useful when you want to
+distinguish objects based on some <em>continuous</em> variable.</li>
+<li class="fragment">Let’s return to the Gapminder data for an
+example.</li>
 </ul>
 </section>
 <section id="example-life-expectancy-over-gdp" class="slide level2">
@@ -1122,18 +1272,25 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Life expectancy as a function of GDP per capita in 2007&quot;</span>, <span class="at">x=</span><span class="st">&quot;Logged GDP per capita&quot;</span>, <span class="at">y=</span><span class="st">&quot;Life expectancy&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/aes%20size-1.png" width="768" /></p>
 </section>
-<section id="exercise-5-average-hourly-output-by-source" class="slide level2">
+<section id="exercise-5-average-hourly-output-by-source"
+class="slide level2">
 <h2>Exercise 5: Average hourly output by source</h2>
-<p>Task:<br>Visualize the average output for each hour of the day, grouped by source.</p>
-<p><small>You need to identify the output per source per hour (e.g. 01:00, 02:00, etc) averaged over all days.</small></p>
+<p>Task:<br>Visualize the average output for each hour of the day,
+grouped by source.</p>
+<p><small>You need to identify the output per source per hour
+(e.g. 01:00, 02:00, etc) averaged over all days.</small></p>
 <ul>
-<li>You will need to prepare your data using both <code>dplyr</code> and <code>lubridate</code> functions.</li>
-<li>You can choose which <code>geom</code>(s) to use, and how to demarcate groups.</li>
-<li>Bonus: use a scale layer to set a color palette (try <code>"Set3"</code>) and change the legend name.</li>
+<li>You will need to prepare your data using both <code>dplyr</code> and
+<code>lubridate</code> functions.</li>
+<li>You can choose which <code>geom</code>(s) to use, and how to
+demarcate groups.</li>
+<li>Bonus: use a scale layer to set a color palette (try
+<code>"Set3"</code>) and change the legend name.</li>
 <li>Remember to add <code>labs()</code>!</li>
 </ul>
 </section>
-<section id="exercise-5-average-hourly-output-by-source-1" class="slide level2">
+<section id="exercise-5-average-hourly-output-by-source-1"
+class="slide level2">
 <h2>Exercise 5: Average hourly output by source</h2>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ex5 <span class="ot">&lt;-</span> long_merged_energy <span class="sc">%&gt;%</span> </span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hour=</span>lubridate<span class="sc">::</span><span class="fu">hour</span>(datetime)) <span class="sc">%&gt;%</span> </span>
@@ -1149,7 +1306,8 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <pre><code>## `summarise()` has grouped output by &#39;hour&#39;. You can override using the
 ## `.groups` argument.</code></pre>
 </section>
-<section id="exercise-5-average-hourly-output-by-source-2" class="slide level2">
+<section id="exercise-5-average-hourly-output-by-source-2"
+class="slide level2">
 <h2>Exercise 5: Average hourly output by source</h2>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ex5</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/exercise5%20plot-1.png" width="768" /></p>
@@ -1157,21 +1315,29 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="facets" class="slide level2">
 <h2>Facets</h2>
 <ul>
-<li class="fragment">So far we have been visualizing grouped data by changing the appearance or position of the objects.</li>
-<li class="fragment">A different approach is to use facets, which creates separate coordinate systems for each geometric object.</li>
+<li class="fragment">So far we have been visualizing grouped data by
+changing the appearance or position of the objects.</li>
+<li class="fragment">A different approach is to use facets, which
+creates separate coordinate systems for each geometric object.</li>
 </ul>
 </section>
-<section id="example-comparing-generation-patterns" class="slide level2">
+<section id="example-comparing-generation-patterns"
+class="slide level2">
 <h2>Example: Comparing generation patterns</h2>
 <p>Task:<br>Compare energy generation over time, across sources.</p>
 <p>How do we do this? Using what we’ve learned so far:</p>
 <ol type="1">
-<li class="fragment">Supply <code>long_gen</code> to <code>ggplot()</code>.</li>
-<li class="fragment">Add a <code>geom_line()</code> layer, setting <code>x=datetime</code> and <code>y=output</code> in <code>aes()</code>.</li>
-<li class="fragment">Let’s set <code>group=source</code> and <code>col=source</code> in <code>aes()</code>.</li>
+<li class="fragment">Supply <code>long_gen</code> to
+<code>ggplot()</code>.</li>
+<li class="fragment">Add a <code>geom_line()</code> layer, setting
+<code>x=datetime</code> and <code>y=output</code> in
+<code>aes()</code>.</li>
+<li class="fragment">Let’s set <code>group=source</code> and
+<code>col=source</code> in <code>aes()</code>.</li>
 </ol>
 </section>
-<section id="example-comparing-generation-patterns-1" class="slide level2">
+<section id="example-comparing-generation-patterns-1"
+class="slide level2">
 <h2>Example: Comparing generation patterns</h2>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>long_gen <span class="sc">%&gt;%</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
@@ -1179,17 +1345,22 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Generation over time, by energy source&quot;</span>, <span class="at">subtitle=</span><span class="st">&quot;Hourly data from September 3-9, 2018&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Output (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/why%20facet-1.png" width="768" /></p>
 </section>
-<section id="example-comparing-generation-patterns-2" class="slide level2">
+<section id="example-comparing-generation-patterns-2"
+class="slide level2">
 <h2>Example: Comparing generation patterns</h2>
 <p>Is this a helpful plot?</p>
 <ul>
-<li class="fragment">Not if our goal is to compare the patterns of each source.</li>
+<li class="fragment">Not if our goal is to compare the patterns of each
+source.</li>
 <li class="fragment">It’s too noisy!</li>
-<li class="fragment">Instead of setting <code>col=</code> in <code>aes()</code>, let’s add a <code>facet_wrap()</code> layer.</li>
-<li class="fragment">Specifically, <code>facet_wrap(~source)</code>, i.e. tell ggplot to “facet by source”.</li>
+<li class="fragment">Instead of setting <code>col=</code> in
+<code>aes()</code>, let’s add a <code>facet_wrap()</code> layer.</li>
+<li class="fragment">Specifically, <code>facet_wrap(~source)</code>,
+i.e. tell ggplot to “facet by source”.</li>
 </ul>
 </section>
-<section id="example-comparing-generation-patterns-3" class="slide level2">
+<section id="example-comparing-generation-patterns-3"
+class="slide level2">
 <h2>Example: Comparing generation patterns</h2>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>long_gen <span class="sc">%&gt;%</span> </span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
@@ -1198,7 +1369,8 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Generation over time, by energy source&quot;</span>, <span class="at">subtitle=</span><span class="st">&quot;Hourly data from September 3-9, 2018&quot;</span>, <span class="at">x=</span><span class="st">&quot;Hour&quot;</span>, <span class="at">y=</span><span class="st">&quot;Output (MW)&quot;</span>)</span></code></pre></div>
 <p><img src="R7_slides_files/figure-revealjs/facet%201-1.png" width="768" /></p>
 </section>
-<section id="example-comparing-generation-patterns-4" class="slide level2">
+<section id="example-comparing-generation-patterns-4"
+class="slide level2">
 <h2>Example: Comparing generation patterns</h2>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>long_gen <span class="sc">%&gt;%</span> </span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
@@ -1234,34 +1406,51 @@ See lecture notes for details on what’s going on inside the scale function. Or
 <section id="comment-your-code" class="slide level2">
 <h2>Comment your code</h2>
 <p>Always remember to comment your code!</p>
-<p>When writing particularly complex code in <code>dplyr</code> or <code>ggplot2</code>, this includes commenting <em>within</em> a flow of <code>%&gt;%</code> or <code>+</code> operators. See the lecture notes for some examples of this.</p>
+<p>When writing particularly complex code in <code>dplyr</code> or
+<code>ggplot2</code>, this includes commenting <em>within</em> a flow of
+<code>%&gt;%</code> or <code>+</code> operators. See the lecture notes
+for some examples of this.</p>
 </section>
 <section id="saving-images" class="slide level2">
 <h2>Saving images</h2>
 <p>Three ways to save images created by ggplot:</p>
 <ul>
-<li>Assign the result of your ggplot code to a named object, which can be saved like other objects in your R workspace</li>
+<li>Assign the result of your ggplot code to a named object, which can
+be saved like other objects in your R workspace</li>
 <li>Use the “save” icon in the Plots tab of RStudio</li>
-<li>Add the function <code>ggsave()</code> as a layer to your plotting code</li>
+<li>Add the function <code>ggsave()</code> as a layer to your plotting
+code</li>
 </ul>
 </section></section>
 <section id="break" class="title-slide slide level1">
 <h1>Break!</h1>
 <p>This is the end of the R lecture sessions.</p>
-<p>After a short break, we will return for a cumulative exercise that combines the skills you have learned since Monday.</p>
+<p>After a short break, we will return for a cumulative exercise that
+combines the skills you have learned since Monday.</p>
 </section>
 
 <section>
 <section id="final-exercise" class="title-slide slide level1">
 <h1>Final Exercise</h1>
-<p>The instructions are in a markdown file in the <code>exercises</code> folder. Create a new RMarkdown file (save it using this naming convention: <code>FinalRExercise_LastnameFirstname.Rmd</code>), in which you will complete the exercise.</p>
+<p>The instructions are in a markdown file in the <code>exercises</code>
+folder. Create a new RMarkdown file (save it using this naming
+convention: <code>FinalRExercise_LastnameFirstname.Rmd</code>), in which
+you will complete the exercise.</p>
 <p>You can work in small groups, but write up your code separately.</p>
 <p>Raise your hand if you need help!</p>
 </section>
 <section id="optional-submissions" class="slide level2">
 <h2>Optional Submissions</h2>
-<p>You’ve created several RMarkdown files over the past three days. Since you stored these in a forked repo, it is possible to create a pull request and ‘submit’ these changes to the base repo. This is <em>optional</em>, but gives you a chance to explore Github functionality and share your work with your classmates.</p>
-<p>Before you submit your completed exercises, <em>move every new file in your repo to the</em> <code>submissions</code> <em>folder</em>. This ensures that we won’t inadvertently make changes to the session materials. Then, create a new pull request, asking to merge changes from your fork to the base repository.</p>
+<p>You’ve created several RMarkdown files over the past three days.
+Since you stored these in a forked repo, it is possible to create a pull
+request and ‘submit’ these changes to the base repo. This is
+<em>optional</em>, but gives you a chance to explore Github
+functionality and share your work with your classmates.</p>
+<p>Before you submit your completed exercises, <em>move every new file
+in your repo to the</em> <code>submissions</code> <em>folder</em>. This
+ensures that we won’t inadvertently make changes to the session
+materials. Then, create a new pull request, asking to merge changes from
+your fork to the base repository.</p>
 </section></section>
     </div>
   </div>
@@ -1274,14 +1463,39 @@ See lecture notes for details on what’s going on inside the scale function. Or
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
         // Push each slide change to the browser history
         history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
         // Vertical centering of slides
         center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
         // Transition style
         transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
         // Transition style for full page slide backgrounds
         backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
 
 
 
