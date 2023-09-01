@@ -1,7 +1,7 @@
 ---
 title: "R1 & R2: Intro to R"
 author: "Kumar Ramanathan (based on materials by Christina Maimone)"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.Date()+1, '%B %Y')`"
 output: 
   html_document:
     toc: true

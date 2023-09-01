@@ -1,7 +1,7 @@
 ---
 title: "Intro to R: Loops, Conditionals, Functions"
 author: "Richard Paquin Morel"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.Date()+1, '%B %Y')`"
 output: 
   html_document:
     toc: true

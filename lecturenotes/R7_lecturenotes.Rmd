@@ -1,7 +1,7 @@
 ---
 title: "R7: Data visualization with ggplot2"
 author: "Kumar Ramanathan (with revisions by Richard Paquin Morel)"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.Date()+1, '%B %Y')`"
 output: 
   html_document:
     toc: true

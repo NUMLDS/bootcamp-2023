@@ -1,7 +1,7 @@
 ---
 title: "Advanced R - data.table"
 author: "Ali Ehlen with additions by Tucker Lewis"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.Date()+1, '%B %Y')`"
 output: 
   html_document:
     toc: true
