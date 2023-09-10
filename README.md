@@ -1,4 +1,4 @@
-# 2023 MSiA boot camp
+# 2023 MLDS Boot Camp
 
 This Github repository contains materials for the R sessions of the 2023 Masters of Machine Learning & Data Science program boot camp, including lecture notes, slides, exercises, and recommended resources as you continue to develop your skills.
 
