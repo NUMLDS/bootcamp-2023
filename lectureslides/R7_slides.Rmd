@@ -1,8 +1,8 @@
 ---
-title: 'Advanced R: Day 3'
+title: 'Advanced R'
 subtitle: 'Data visualization with ggplot2'
 author: "Alice Zhao"
-date: "`r format(Sys.Date()+1, '%B %Y')`"
+date: "`r format(Sys.Date(), '%B %Y')`"
 output: 
   revealjs::revealjs_presentation:
     fig_height: 4
@@ -114,7 +114,7 @@ ggplot(gapminder07) +
 
 # Preparing your data
 
-> - Recall the role of pipes (`%>%`) in `dplyr` this morning. 
+> - Recall the role of pipes (`%>%`) in `dplyr`. 
 > - `dplyr` and `ggplot2` are designed to work well together. 
 > - You can use a series of pipes to prepare your data before plotting.
 > - To see examples, let's turn to the California energy data.
