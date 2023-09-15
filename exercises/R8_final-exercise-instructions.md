@@ -1,4 +1,4 @@
-# MSIA Boot Camp - Final R exercise
+# MLDS Boot Camp - Final R exercise
 
 You've learned quite a lot about R in a short time. Congratulations! This exercise is designed to give you some additional practice on the material we have discussed this week while the lectures are still fresh in your mind, and to integrate different tools and skills that you have learned.
 
