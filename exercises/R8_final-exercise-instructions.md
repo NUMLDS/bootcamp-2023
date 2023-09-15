@@ -34,10 +34,10 @@ This is where the majority of your time will be spent.
 
 #### Task 0: Open RStudio
 
-Create a new .Rmd file to document your work.
+Create a new .R or .Rmd file to document your work.
 
 - Remember to **load necessary packages**.
-- Remember to **comment extensively** in your code. Since you will be working in an RMarkdown file, you can describe your workflow in the text section. But you should also comment within all of your code chunks.
+- Remember to **comment extensively** in your code. If you're working in an RMarkdown file, you can describe your workflow in the text section. But you should also comment within all of your code chunks.
 
 #### Task 1: Import your data
 
