@@ -1,4 +1,4 @@
-# MSIA Boot Camp - Final R exercise
+# MLDS Boot Camp - Final R exercise
 
 You've learned quite a lot about R in a short time. Congratulations! This exercise is designed to give you some additional practice on the material we have discussed this week while the lectures are still fresh in your mind, and to integrate different tools and skills that you have learned.
 
@@ -34,10 +34,10 @@ This is where the majority of your time will be spent.
 
 #### Task 0: Open RStudio
 
-Create a new .Rmd file to document your work.
+Create a new .R or .Rmd file to document your work.
 
 - Remember to **load necessary packages**.
-- Remember to **comment extensively** in your code. Since you will be working in an RMarkdown file, you can describe your workflow in the text section. But you should also comment within all of your code chunks.
+- Remember to **comment extensively** in your code. If you're working in an RMarkdown file, you can describe your workflow in the text section. But you should also comment within all of your code chunks.
 
 #### Task 1: Import your data
 
