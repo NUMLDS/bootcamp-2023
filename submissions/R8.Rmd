@@ -1,0 +1,128 @@
+---
+title: "R8"
+output: html_document
+date: "2023-09-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: Clean the Data
+
+### Task 1: Import your data
+```{r}
+nys_schools = read.csv("submissions/nys_schools.csv")
+nys_acs = read.csv("submissions/nys_acs.csv")
+nys_schools
+nys_acs
+```
+
+### schools
+```{r}
+summary(nys_schools)
+```
+```{r}
+table(nys_schools$county_name)
+```
+
+Remove null values
+```{r}
+nys_schools_clean = nys_schools %>% filter(region != -99 & district_name != -99 & total_enroll != -99 & per_free_lunch != -99 & mean_ela_score != -99 & mean_math_score != -99)
+nys_schools_clean
+```
+```{r}
+summary(nys_schools_clean)
+```
+The tests that the NYS Department of Education administers changes from time to time, so scale scores are not directly comparable year-to-year. Create a new variable that is the standardized z-score for math and English Language Arts (ELA) for each year (hint: group by year and use the scale() function)
+```{r}
+nys_schools_clean = nys_schools_clean %>% 
+  group_by(year) %>% 
+  mutate(z_ela_score = scale(mean_ela_score), z_math_score = scale(mean_math_score))
+nys_schools_clean
+```
+
+### acs
+```{r}
+summary(nys_acs)
+```
+```{r}
+table(nys_acs$county_name)
+```
+There is no null values in acs, each county has 8 entries.
+
+Create a categorical variable that groups counties into "high", "medium", and "low" poverty groups. Decide how you want to split up the groups and briefly explain your decision.
+
+Divide poverty based on 1st quarter and 3rd quarter
+Below 1st quarter 0.10903: low
+Between 1st and 3rd: medium
+Above 3rd quarter 0.14929: high
+```{r}
+nys_acs$poverty_rating <- NA
+nys_acs$poverty_rating[nys_acs$county_per_poverty < 0.10903] <- "Low"
+nys_acs$poverty_rating[nys_acs$county_per_poverty > 0.10903 & 
+                       nys_acs$county_per_poverty < 0.14929] <- "Medium"
+nys_acs$poverty_rating[nys_acs$county_per_poverty > 0.14929] <- "High"
+nys_acs
+```
+
+### Merge datasets
+```{r}
+nys_merged = merge(nys_schools_clean, nys_acs, by = c("county_name", "year"))
+nys_merged
+```
+
+## Step 2: Analyze the Data
+
+### Create summary tables
+For each county: total enrollment, percent of students qualifying for free or reduced price lunch, and percent of population in poverty.
+```{r}
+nys_merged %>% 
+  group_by(county_name, year) %>% 
+  summarise(total_enrollment = sum(total_enroll), 
+            frl = sum(total_enroll * (per_free_lunch + per_reduced_lunch)) / sum(total_enroll),
+            poverty = mean(county_per_poverty))
+```
+
+For the counties with the top 5 and bottom 5 poverty rate: percent of population in poverty, percent of students qualifying for free or reduced price lunch, mean reading score, and mean math score.
+
+```{r}
+nys_merged
+```
+
+
+```{r}
+nys_summary = nys_merged %>% 
+  group_by(county_name, year) %>% 
+  summarise(poverty = mean(county_per_poverty),
+            frl = sum(total_enroll * (per_free_lunch + per_reduced_lunch)) / sum(total_enroll),
+            ela = mean(z_ela_score),
+            math = mean(z_math_score))
+nys_summary
+```
+```{r}
+nys_summary %>%
+  group_by(year) %>%
+  arrange(poverty) %>%
+  slice_head(n = 5)
+nys_summary %>%
+  group_by(year) %>%
+  arrange(poverty) %>%
+  slice_tail(n = 5)
+```
+
+### Data visualization
+
+The relationship between access to free/reduced price lunch and test performance, at the school level.
+```{r}
+ggplot(data = nys_summary) + 
+  geom_point(mapping = aes(x = frl, y = ela)) +
+  labs(title="Scatter plot between free/reduced price lunch and average ela test performance")
+```
+
+```{r}
+ggplot(data = nys_summary) + 
+  geom_point(mapping = aes(x = frl, y = math)) +
+  labs(title="Scatter plot between free/reduced price lunch and average math test performance")
+```
+
