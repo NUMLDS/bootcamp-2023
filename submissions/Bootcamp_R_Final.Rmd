@@ -1,0 +1,196 @@
+---
+title: "Bootcamp_R_Final"
+output: html_document
+date: "2023-09-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+getwd()
+```
+
+## Import data in the data file
+```{r cars}
+school = read.csv("data/nys_schools.csv");
+counties = read.csv('data/nys_acs.csv')
+```
+
+## Data Exploration
+
+You can also embed plots, for example:
+
+```{r another chunk name}
+summary(counties)  # Summarize numeric columns
+str(counties)     # Display the structure of the data
+head(counties)    # Show the first few rows of the data
+```
+
+
+
+### We did not find missing value in table Counties
+```{r another chunk name}
+# Check for missing values in the "column_name" column
+missing_values <- is.na(counties)
+
+# Count the number of missing values in each column
+missing_counts <- colSums(missing_values)
+
+print(missing_counts)
+
+```
+
+
+
+## we found some outliers in Total_enroll, per_Free_lunch, Per_reduced_lunch, per_lep
+## mean_ela_score, and mean_math_score
+```{r another chunk name}
+summary(school)  # Summarize numeric columns
+str(school)     # Display the structure of the data
+head(school)    # Show the first few rows of the data
+```
+### We did not find missing value in table School
+```{r another chunk name}
+# Check for missing values in the "column_name" column
+missing_values <- is.na(school)
+
+# Count the number of missing values in each column
+missing_counts <- colSums(missing_values)
+
+print(missing_counts)
+
+```
+
+
+### we found some outliers in Total_enroll, per_Free_lunch, Per_reduced_lunch, per_lep
+## mean_ela_score, and mean_math_score,  so we remove the outlier and save it into another table
+```{r another chunk name}
+# Remove outliers from multiple columns
+cleaned_school <- school %>%
+  filter(
+    total_enroll >= 0,
+    per_free_lunch >=0 & per_free_lunch <= 1,
+    per_reduced_lunch >=0 & per_reduced_lunch <= 1,
+    per_lep >=0 & per_lep <= 1,
+    mean_ela_score >=0,
+    mean_math_score >= 0
+  )
+
+```
+
+
+
+
+# We will split into 3 groups using the quantile value of the column county_per_poverty
+
+```{r another chunk name}
+# Calculate quartiles (25th, 50th, and 75th percentiles) for "column_name"
+quartiles <- quantile(counties$county_per_poverty, probs = c(0.33, 0.66))
+
+# Print the quartile values
+
+q33 = quartiles[1] #33th Percentile
+q66 = quartiles[2] #66th Percentile
+
+```
+
+```{r another chunk name}
+# Calculate quartiles (25th, 50th, and 75th percentiles) for "column_name"
+counties <- counties %>%
+  mutate(prop_group = case_when(
+    county_per_poverty <= q33 ~ "low",
+    county_per_poverty <= q66 & county_per_poverty > q33 ~ "Medium",
+    county_per_poverty > q66 ~ "High"
+  ))
+```
+
+
+
+# We will split into 3 groups using the quantile value of the column county_per_poverty
+
+
+
+
+```{r another chunk name}
+### 3.3 Standardized test scores
+
+# Make calculation manually
+scores_std <- cleaned_school %>%
+  select(year, contains("score")) %>%
+  group_by(year) %>%
+  summarize(ela_mean = mean(mean_ela_score, na.rm=TRUE),
+            math_mean = mean(mean_math_score, na.rm=TRUE),
+            ela_sd = sd(mean_ela_score, na.rm=TRUE),
+            math_sd = sd(mean_math_score, na.rm=TRUE))
+
+# Create z-score columns
+schools_all = inner_join(cleaned_school, scores_std, by="year")
+schools_all = mutate(schools_all,
+                     ela_z_score = (mean_ela_score-ela_mean)/ela_sd,
+                     math_z_score = (mean_math_score-math_mean)/math_sd)
+
+head(schools_all)
+```
+
+
+
+
+
+
+```{r another chunk name}
+# Perform an inner join between df1 and df2 on the common_column
+head(cleaned_school)
+```
+
+### we will do a inner join between the table 
+
+```{r another chunk name}
+# Perform an inner join between df1 and df2 on the common_column
+merge_table <- inner_join(counties, schools_all, by = c("county_name", "year"))
+head(merge_table)
+```
+
+
+```{r another chunk name}
+
+# Group by the "Group" column and calculate summary statistics
+summary_data <- merge_table %>%
+  group_by(county_name) %>%
+  summarize(
+    Total_enrollment = sum(total_enroll),
+    Mean_per_free_lunch = mean(per_free_lunch),
+    Mean_per_reduced_lunch = mean(per_reduced_lunch),
+    Mean_per_poverty = mean(county_per_poverty),
+    Count = n()
+  )
+
+# Print the summary data
+print(summary_data)
+```
+
+```{r another chunk name}
+sorted_data <- summary_data %>%
+  arrange(desc(Mean_per_poverty))  # Use 'desc' for descending order
+
+# Select the top 5 rows
+top_5 <- sorted_data %>%
+  slice_head(n = 5)
+
+top_5
+
+```
+
+```{r another chunk name}
+r_sorted_data <- summary_data %>%
+  arrange(Mean_per_poverty)  # Use 'desc' for descending order
+
+# Select the top 5 rows
+bot_5 <- r_sorted_data %>%
+  slice_head(n = 5)
+
+bot_5
+
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
