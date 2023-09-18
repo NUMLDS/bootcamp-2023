@@ -1,0 +1,65 @@
+---
+title: "FinalRExercise_LinHanxi"
+author: "Hanxi Lin"
+date: "2023-09-18"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(data.table)
+library(ggplot2)
+```
+
+```{r}
+schools <- read.csv("nys_schools.csv")
+counties <- read.csv("nys_acs.csv")
+summary(schools)
+summary(counties)
+```
+
+```{r}
+schools[schools == -99] <- NA
+schools <- na.omit(schools)
+
+counties$poverty_groups <- NA
+quantiles <- quantile(counties$county_per_poverty, c(0, 1/3, 2/3, 1), na.rm = TRUE)
+counties$poverty_groups <- cut(counties$county_per_poverty, breaks = quantiles,
+  labels = c("Low", "Medium", "High"))
+table(counties$poverty_groups)
+
+schools <- schools %>%
+  group_by(year) %>%
+  mutate(mean_ela_score_scaled = scale(mean_ela_score, center = TRUE, scale = TRUE)) %>%
+  mutate(mean_math_score_scaled = scale(mean_math_score, center = TRUE, scale = TRUE))
+
+all <- merge(schools, counties, by.schools = c("year", "county_name"), by.counties = c("year", "name"))
+```
+
+
+```{r}
+prop.table(all$county_per_poverty)
+all <- all %>%
+  group_by(county_name) %>%
+  mutate(total = sum(total_enroll))
+```
+
+What can data tell us about the relationship between poverty and test performance in New York public schools?
+
+What's the difference in test performance between low, medium and high poverty areas?
+
+Has this relationship changed over time?
+
+Is this relationship at all moderated by access to free / reduced price lunch?
+
+
+
+
+
+
+
+
