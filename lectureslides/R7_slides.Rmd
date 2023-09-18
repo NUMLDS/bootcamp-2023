@@ -602,7 +602,7 @@ Task:<br>Visualize the average output for each hour of the day, grouped by sourc
 ex5 <- long_merged_energy %>% 
   mutate(hour=lubridate::hour(datetime)) %>% 
   group_by(hour, source) %>% 
-  summarize(output=sum(output)) %>%
+  summarize(output=mean(output)) %>%
   ggplot() + 
   geom_area(aes(x=hour, y=output, fill=factor(source))) + 
   scale_fill_brewer(palette="Set3", name="Source") + 
