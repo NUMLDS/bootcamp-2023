@@ -1,0 +1,90 @@
+---
+title: "bootcamp_project"
+author: "Darwin Ye"
+date: "2023-09-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+
+nys_school = read.csv("data/nys_schools.csv")
+nys_acs = read.csv("data/nys_acs.csv")
+
+summary(nys_school)
+
+nys_school =
+    nys_school %>%
+    filter(
+        total_enroll != -99,
+        per_free_lunch != -99,
+        per_free_lunch <= 1,
+        per_reduced_lunch != -99,
+        per_reduced_lunch <= 1,
+        per_lep != -99,
+        mean_ela_score != 99,
+        mean_math_score != 99
+    ) %>% 
+    group_by(year) %>%
+    mutate(english_score = scale(mean_ela_score),
+           math_score = scale(mean_math_score))
+
+summary(nys_school)
+summary(nys_acs)
+
+q33 = quantile(nys_acs$county_per_poverty, 0.33)
+q66 = quantile(nys_acs$county_per_poverty, 0.66)
+
+nys_acs =
+    nys_acs %>%
+    mutate(
+        poverty_rank =
+            case_when(
+                county_per_poverty <= q33 ~ "low",
+                county_per_poverty > q33 &
+                    county_per_poverty <= q66 ~ "medium",
+                TRUE ~ "high"
+            )
+    ) 
+
+new_data = 
+    inner_join(nys_acs, nys_school, by = c("year", "county_name"))
+    
+
+
+
+```
+
+
+```{r}
+# Create a numeric vector
+data <- c(10, 20, 30, 40, 50)
+
+# Use the scale() function to calculate z-scores
+scaled_data <- scale(data)
+
+# View the result
+print(scaled_data)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
